@@ -70,7 +70,7 @@ func evaluatePostfix(postfix string) (float64, error) {
 	for i := 0; i < len(postfix); i++ {
 		token := rune(postfix[i])
 		switch {
-		case token >= '0' && token <= '9' || token == '.': // 如果 token 是操作数
+		case token >= '0' && token <= '9' || token == '.':
 			var temp strings.Builder
 			for i < len(postfix) {
 				token = rune(postfix[i])
@@ -81,9 +81,9 @@ func evaluatePostfix(postfix string) (float64, error) {
 					break
 				}
 			}
-			operand, _ := strconv.ParseFloat(temp.String(), 64) // 将字符串转换为浮点数
-			stack = append(stack, operand)                      // 将操作数压入栈中
-		case token == '+', token == '-', token == '*', token == '/': // 如果 token 是运算符
+			operand, _ := strconv.ParseFloat(temp.String(), 64)
+			stack = append(stack, operand)
+		case token == '+', token == '-', token == '*', token == '/':
 			if len(stack) < 2 { // 检查栈中是否至少有两个操作数
 				return 0, fmt.Errorf("后缀表达式无效")
 			}
@@ -113,7 +113,7 @@ func evaluatePostfix(postfix string) (float64, error) {
 		return 0, fmt.Errorf("后缀表达式无效")
 	}
 
-	return stack[0], nil // 返回结果
+	return stack[0], nil
 }
 
 func main() {
