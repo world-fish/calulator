@@ -32,7 +32,6 @@ func infixToPostfix(infix string) string {
 				token = rune(infix[i])
 				if token >= '0' && token <= '9' || token == '.' {
 					postfix.WriteRune(token)
-					fmt.Println(token - '0')
 					i++
 				} else {
 					break
@@ -68,14 +67,25 @@ func infixToPostfix(infix string) string {
 func evaluatePostfix(postfix string) (float64, error) {
 	var stack []float64 // 创建一个栈来存储操作数
 
-	for _, token := range postfix {
+	for i := 0; i < len(postfix); i++ {
+		token := rune(postfix[i])
 		switch {
-		case token >= '0' && token <= '9': // 如果 token 是操作数
-			operand, _ := strconv.ParseFloat(string(token), 64) // 将字符串转换为浮点数
+		case token >= '0' && token <= '9' || token == '.': // 如果 token 是操作数
+			var temp strings.Builder
+			for i < len(postfix) {
+				token = rune(postfix[i])
+				if token >= '0' && token <= '9' || token == '.' {
+					temp.WriteRune(token)
+					i++
+				} else {
+					break
+				}
+			}
+			operand, _ := strconv.ParseFloat(temp.String(), 64) // 将字符串转换为浮点数
 			stack = append(stack, operand)                      // 将操作数压入栈中
 		case token == '+', token == '-', token == '*', token == '/': // 如果 token 是运算符
 			if len(stack) < 2 { // 检查栈中是否至少有两个操作数
-				return 0, fmt.Errorf("无效的后缀表达式")
+				return 0, fmt.Errorf("后缀表达式无效")
 			}
 			// 从栈中弹出两个操作数
 			operand2 := stack[len(stack)-1]
@@ -100,7 +110,7 @@ func evaluatePostfix(postfix string) (float64, error) {
 	}
 
 	if len(stack) != 1 { // 检查栈中是否只剩下一个元素
-		return 0, fmt.Errorf("无效的后缀表达式")
+		return 0, fmt.Errorf("后缀表达式无效")
 	}
 
 	return stack[0], nil // 返回结果
@@ -108,18 +118,25 @@ func evaluatePostfix(postfix string) (float64, error) {
 
 func main() {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("请输入中缀表达式:")
-	infix, _ := reader.ReadString('\n')
 	re := regexp.MustCompile(`\s+`)
-	infix = re.ReplaceAllString(infix, "")
+	for {
+		fmt.Print("请输入算数表达式:")
+		infix, _ := reader.ReadString('\n')
+		infix = re.ReplaceAllString(infix, "")
+		if infix == "" {
+			break
+		}
 
-	postfix := infixToPostfix(infix)
-	fmt.Println("后缀表达式:", postfix)
+		postfix := infixToPostfix(infix)
+		fmt.Println("后缀表达式:", postfix)
 
-	//result, err := evaluatePostfix(postfix)
-	//if err != nil {
-	//	fmt.Println("错误:", err)
-	//} else {
-	//	fmt.Println("结果:", result)
-	//}
+		result, err := evaluatePostfix(postfix)
+		if err != nil {
+			fmt.Println("错误:", err)
+		} else {
+			fmt.Printf("结果:%.2f", result)
+		}
+
+		fmt.Println("\n")
+	}
 }
