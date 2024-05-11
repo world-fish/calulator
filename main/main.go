@@ -23,10 +23,23 @@ func infixToPostfix(infix string) string {
 	var postfix strings.Builder
 	var stack []rune
 
-	for _, token := range infix {
+	//for _, token := range infix {
+	for i := 0; i < len(infix); i++ {
+		token := rune(infix[i])
 		switch {
-		case token >= '0' && token <= '9':
-			postfix.WriteRune(token)
+		case token >= '0' && token <= '9' || token == '.':
+			for i < len(infix) {
+				token = rune(infix[i])
+				if token >= '0' && token <= '9' || token == '.' {
+					postfix.WriteRune(token)
+					fmt.Println(token - '0')
+					i++
+				} else {
+					break
+				}
+			}
+			i--
+			postfix.WriteRune(' ')
 		case token == '(':
 			stack = append(stack, token)
 		case token == ')':
@@ -103,10 +116,10 @@ func main() {
 	postfix := infixToPostfix(infix)
 	fmt.Println("后缀表达式:", postfix)
 
-	result, err := evaluatePostfix(postfix)
-	if err != nil {
-		fmt.Println("错误:", err)
-	} else {
-		fmt.Println("结果:", result)
-	}
+	//result, err := evaluatePostfix(postfix)
+	//if err != nil {
+	//	fmt.Println("错误:", err)
+	//} else {
+	//	fmt.Println("结果:", result)
+	//}
 }
