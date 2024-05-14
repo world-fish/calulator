@@ -37,7 +37,7 @@ func main() {
 		if ok {
 			fmt.Println("回答：", answer)
 		} else {
-			fmt.Println("我还在学习中，您的问题我回答不了")
+			fmt.Println("回答：我还在学习中，您的问题我回答不了")
 		}
 	}
 }
