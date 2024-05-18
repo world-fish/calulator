@@ -70,6 +70,24 @@ func mergeSort(arr []int) []int {
 	return merge(left, right)
 }
 
+// 二分
+func erfen(nums []int, num int) int {
+	left := 0
+	right := len(nums)
+	var mid int
+	for left <= right {
+		mid = left + (right-left)/2
+		if nums[mid] < num {
+			left = mid + 1
+		} else if nums[mid] > num {
+			right = mid - 1
+		} else if nums[mid] == num {
+			return mid
+		}
+	}
+	return -1
+}
+
 func merge(left, right []int) []int {
 	result := make([]int, 0, len(left)+len(right))
 	for len(left) > 0 || len(right) > 0 {
@@ -92,6 +110,8 @@ func merge(left, right []int) []int {
 
 func main() {
 	arr := []int{67, 12, 93, 5, 76, 41, 88, 72, 29, 34, 19, 95, 61, 50, 7, 83, 30, 91, 68, 53}
+	arrr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	fmt.Println(erfen(arrr, 20))
 
 	// 冒泡排序
 	bubbleSortArr := make([]int, len(arr))

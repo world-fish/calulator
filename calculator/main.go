@@ -30,7 +30,7 @@ func infixToPostfix(infix string) string {
 		case token >= '0' && token <= '9' || token == '.':
 			for i < len(infix) {
 				token = rune(infix[i])
-				if token >= '0' && token <= '9' || token == '.' {
+				if token >= '0' && token <= '9' || token == '.' || token == '!' {
 					postfix.WriteRune(token)
 					i++
 				} else {
@@ -70,7 +70,12 @@ func evaluatePostfix(postfix string) (float64, error) {
 	for i := 0; i < len(postfix); i++ {
 		token := rune(postfix[i])
 		switch {
-		case token >= '0' && token <= '9' || token == '.':
+		case token >= '0' && token <= '9' || token == '.' || token == '!':
+			nega := 1.0
+			if token == '!' {
+				nega = -1.0
+				i++
+			}
 			var temp strings.Builder
 			for i < len(postfix) {
 				token = rune(postfix[i])
@@ -82,6 +87,7 @@ func evaluatePostfix(postfix string) (float64, error) {
 				}
 			}
 			operand, _ := strconv.ParseFloat(temp.String(), 64)
+			operand *= nega
 			stack = append(stack, operand)
 		case token == '+', token == '-', token == '*', token == '/':
 			if len(stack) < 2 { // 检查栈中是否至少有两个操作数
@@ -116,6 +122,15 @@ func evaluatePostfix(postfix string) (float64, error) {
 	return stack[0], nil
 }
 
+// 判断负数
+func negative(infix string) string {
+	infix = strings.Replace(infix, "(-", "(!", -1)
+	if infix[0] == '-' {
+		infix = "!" + infix[1:]
+	}
+	return infix
+}
+
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 	re := regexp.MustCompile(`\s+`)
@@ -126,6 +141,9 @@ func main() {
 		if infix == "" {
 			break
 		}
+
+		infix = negative(infix)
+		fmt.Println(infix)
 
 		postfix := infixToPostfix(infix)
 		fmt.Println("后缀表达式:", postfix)
